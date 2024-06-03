@@ -49,8 +49,20 @@ void DFplayerInit(void)
 * @param  
 * @return 
 */
+int UpdateStatus()
+{  
+    SendCMD(STATU_UPDATE,0x00,0x00,NO_ACK);
+    return 0;
+}
+/**
+* @brief  
+* @param  
+* @return 
+*/
 int SystemNotify(uint8_t notify)
 {
+    SendCMD(SELECT_FOLDER,SYSTEM_VOICE_FOLDER,notify,NO_ACK);
+    SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
     return 0;
 }
 /**
@@ -60,9 +72,24 @@ int SystemNotify(uint8_t notify)
 */
 int PlayFavourList(void)
 {
+    SendCMD(FOLDER_CIRCLE,0x00,FAVOR_FOLDER,NO_ACK);
 	return 0;
 }
-
+int StopPlay()
+{
+    SendCMD(STOP_PLAY,0x00,0x00,NO_ACK);
+    return 0;
+}
+int EndPlay()
+{
+    SendCMD(END_PLAY,0x00,0x00,NO_ACK);
+    return 0;
+}
+int ContinuePlay()
+{
+    SendCMD(CONTINUE_PLAY,0x00,0x00,NO_ACK);
+    return 0;
+}
 /**
 * @brief  
 * @param  
@@ -70,7 +97,9 @@ int PlayFavourList(void)
 */
 int PlayTargetVoice(uint8_t id)
 {    
-	return SendCMD(SINGLE_CYCLE,0x00,id,NO_ACK);
+	SendCMD(SELECT_FOLDER,CD_FOLDER,id,NO_ACK);
+  SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
+  return 0;
 }
 
 /**
@@ -80,6 +109,7 @@ int PlayTargetVoice(uint8_t id)
 */
 int VolumeCtrl(uint8_t var)
 {
+    SendCMD(VOLUMESET,0x00,var,NO_ACK);
 	return 0;
 }
 /**
@@ -125,7 +155,20 @@ int MP3_Unpack()
     }
     switch(mp3.rxbuff[3])
     {
-        case 0x0f:
+        case ERROR_MSG:
+            break;
+        case STATUS_MSG:
+            switch(mp3.rxbuff[5])
+            {
+                case MP3RUNNING:
+                    break;
+                case MP3STOP:
+                    break;
+                case MP3END:
+                    break;
+                default:
+                    break;
+            }
             break;
         default:
             break;
