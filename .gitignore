@@ -1,7 +1,7 @@
 MDK-ARM/pikachu_record_player.uvguix.11478
 .vscode/*
 # 忽略 MDK-ARM/output目录下所有文件
-MDK-ARM/output/*
+MDK-ARM/pikachu_record_player/*
 
 # 不忽略 .crf文件
 #!MDK-ARM/output/*.crf
