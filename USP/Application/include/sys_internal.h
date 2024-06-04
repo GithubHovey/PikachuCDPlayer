@@ -15,12 +15,7 @@
 /* Files includes  -----------------------------------------------------------*/
 #include "FreeRTOS.h"
 #include "task.h"
-extern "C"
-{
-#include "Drivers/RC522.h"
-#include "Drivers/dfplayer.h"
-#include "Drivers/debugmonitor.h"
-}
+#include "Middlewares/CDplayer.h"
 
 /* Defines -------------------------------------------------------------------*/
 /* Task Config Definitions ---------------------------------------------------------*/

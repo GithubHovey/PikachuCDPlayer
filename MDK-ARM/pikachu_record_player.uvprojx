@@ -10,7 +10,7 @@
       <TargetName>pikachu_record_player</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -867,6 +867,26 @@
               <FileName>RC522.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\USP\Drivers\RC522.h</FilePath>
+            </File>
+            <File>
+              <FileName>drivers.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\USP\Drivers\drivers.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>USP/Middlewares</GroupName>
+          <Files>
+            <File>
+              <FileName>CDplayer.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\USP\Middlewares\CDplayer.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>CDplayer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\USP\Middlewares\CDplayer.h</FilePath>
             </File>
           </Files>
         </Group>

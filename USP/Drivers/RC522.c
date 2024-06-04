@@ -709,46 +709,36 @@ int NtagDetect()
         return -1;
     if(PcdSelect2(UID+4) != MI_OK)
         return -1;
-    ntag_txdata[0] = 0x01;
-    ntag_txdata[1] = 0x02;
-    ntag_txdata[5] = 0x06;
-    if(PcdWrite(0x07,ntag_txdata) != MI_OK)
+    // ntag_txdata[0] = 0x01;
+    // ntag_txdata[1] = 0x02;
+    // ntag_txdata[5] = 0x06;
+    // if(PcdWrite(0x07,ntag_txdata) != MI_OK)
+    //     return -1;
+    if(PcdRead(0x07,ntag_rxdata) != MI_OK) //第七页的 ntag_rxdata[2~5] 4个字节 
         return -1;
-    if(PcdRead(0x06,ntag_rxdata) != MI_OK)
-        return -1;
+    
     return 0;
 }
-//获取卡编号函数，返回卡编号1-3，非系统录入卡返回0，没有识别到卡返回5或6
-// uint8_t Rc522Test(void)										
-// {
-// 	uint8_t cardno;
-//     if (PcdRequest(REQ_ALL, Temp) == MI_OK)
-// 	 {
-// 		if (PcdAnticoll(UID) == MI_OK)
-// 		{
-// 			cardno=0;	
-// 			if(UID[0]==UI0[0]&&UID[1]==UI0[1]&&UID[2]==UI0[2]&&UID[3]==UI0[3])
-// 			{
-// 				cardno=1;
-// 			}
-// 			else if(UID[0]==UI1[0]&&UID[1]==UI1[1]&&UID[2]==UI1[2]&&UID[3]==UI1[3])
-// 			{
-// 				cardno=2;
-// 			}
-// 			else if(UID[0]==UI2[0]&&UID[1]==UI2[1]&&UID[2]==UI2[2]&&UID[3]==UI2[3])
-// 			{
-// 				cardno=3;
-// 			}
-// 			else if(UID[0]==UI3[0]&&UID[1]==UI3[1]&&UID[2]==UI3[2]&&UID[3]==UI3[3])
-// 			{
-// 				cardno=4;
-// 			}
-// 			else cardno = 0;
-// 		}
-// 		else cardno = 5;
-// 	}
-// 	else cardno = 6;
-// 	return cardno;
-// }
+int ReadNtagMsg(uint8_t * rxcmd)
+{
+//    uint8_t rxcmd[2]; //rxcmd[0]=命令 rxcmd[1]=数据
+    if(ntag_rxdata[2]==0x30&&ntag_rxdata[3]==0x31)
+    {
+        /*其余两位均为数字*/
+        if((ntag_rxdata[4]-0x30)>=0 && (ntag_rxdata[4]-0x30)<=9 && (ntag_rxdata[5]-0x30)>=0 && (ntag_rxdata[5]-0x30)<=9)
+        {
+            rxcmd[0] = 0x0f;
+            rxcmd[1] = (ntag_rxdata[4]-0x30)*10 + (ntag_rxdata[5]-0x30);
+            return 0;
+        }
+    }
+    if(ntag_rxdata[2]==0x6c&&ntag_rxdata[3]==0x69&&ntag_rxdata[4]==0x73&&ntag_rxdata[5]==0x74)
+    {
+        rxcmd[0] = 0x17;
+        rxcmd[1] = 0x00;
+        return 0;
+    }
+    return -1;
+}
 
 
