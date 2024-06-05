@@ -18,6 +18,9 @@ extern "C"
 #define INITED  0
 #define PLAYING 1
 #define STOP    2
+
+#define CD_OK     0
+#define CD_ERROR  -1
 class CDplayer
 {
 private:
@@ -35,16 +38,19 @@ public:
     uint8_t cmd[2];
     uint16_t heartbeat;
     uint16_t timeset;
+    uint8_t current_CD;
+    bool cmd_wait_for_handle;
     int Init();
     int CDdetect();
-    int Mp3Play();
-    int CmdHandle();
-    int VolumeCtr();
+    void Mp3Play();
+    int ReadCDdata();
+    void VolumeCtr();
     bool tailkey_is_on();
     bool new_cmd_has_been_recived();
     void MotorCtr(uint8_t __switch);
     int Mp3EndPlay();
     bool is_CD_been_switched();
+    void Update();
     //~CDplayer();
 };
 

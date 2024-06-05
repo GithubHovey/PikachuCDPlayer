@@ -65,4 +65,5 @@ int StopPlay();
 int EndPlay();
 int ContinuePlay();
 int UpdateStatus();
+uint8_t MP3_Unpack();
 #endif

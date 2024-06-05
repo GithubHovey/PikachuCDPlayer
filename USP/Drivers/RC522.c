@@ -735,7 +735,7 @@ int ReadNtagMsg(uint8_t * rxcmd)
     if(ntag_rxdata[2]==0x6c&&ntag_rxdata[3]==0x69&&ntag_rxdata[4]==0x73&&ntag_rxdata[5]==0x74)
     {
         rxcmd[0] = 0x17;
-        rxcmd[1] = 0x00;
+        rxcmd[1] = 0xff;
         return 0;
     }
     return -1;

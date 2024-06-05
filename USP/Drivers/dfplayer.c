@@ -141,8 +141,9 @@ int DFplayerCallback()
 * @param  
 * @return 
 */
-int MP3_Unpack()
+uint8_t MP3_Unpack()
 {
+    uint8_t mp3statu;
     uint16_t check_sum = 0;
     if((mp3.rxbuff[0] != 0x7e) || (mp3.rxbuff[1] != 0xff) || (mp3.rxbuff[9] != 0xef))
     {
@@ -156,15 +157,19 @@ int MP3_Unpack()
     switch(mp3.rxbuff[3])
     {
         case ERROR_MSG:
+            mp3statu = -1;
             break;
         case STATUS_MSG:
             switch(mp3.rxbuff[5])
             {
                 case MP3RUNNING:
+                    mp3statu = MP3RUNNING;
                     break;
                 case MP3STOP:
+                    mp3statu = MP3STOP
                     break;
                 case MP3END:
+                    mp3statu = MP3END
                     break;
                 default:
                     break;
@@ -173,6 +178,6 @@ int MP3_Unpack()
         default:
             break;
     }
-    return 0;
+    return mp3statu;
 }
 
