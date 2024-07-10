@@ -50,7 +50,7 @@ void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, MOTOR_POWER_CTL_Pin|SYSTEM_TICK_Pin|RFID_CS_Pin|RFID_CLK_Pin
+  HAL_GPIO_WritePin(GPIOB, MOTOR_POWER_CTL_Pin|GPIO_PIN_2|RFID_CS_Pin|RFID_CLK_Pin
                           |RFID_OUT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -69,8 +69,8 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(TAIL_KEY_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PBPin PBPin PBPin PBPin */
-  GPIO_InitStruct.Pin = SYSTEM_TICK_Pin|RFID_CS_Pin|RFID_CLK_Pin|RFID_OUT_Pin;
+  /*Configure GPIO pins : PB2 PBPin PBPin PBPin */
+  GPIO_InitStruct.Pin = GPIO_PIN_2|RFID_CS_Pin|RFID_CLK_Pin|RFID_OUT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

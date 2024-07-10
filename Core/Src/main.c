@@ -97,7 +97,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
-
+	HAL_Delay(2000);
   /* USER CODE END 2 */
 
   /* Call init function for freertos objects (in freertos.c) */

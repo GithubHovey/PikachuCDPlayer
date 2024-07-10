@@ -21,37 +21,53 @@ extern "C"
 
 #define CD_OK     0
 #define CD_ERROR  -1
+#define MOTOR_ON 1
+#define MOTOR_OFF 0
+struct MP3COMMAND
+{
+  uint8_t cmd_type;
+  uint8_t cmd_data;
+};
+
 class CDplayer
 {
 private:
     /* data */
 public:
-    CDplayer(uint8_t __statu,uint8_t __volume,uint16_t __timeset):       //A初始化列表
-      statu(__statu),
+    CDplayer(uint8_t __volume,uint16_t __timeset):       //A初始化列表
       volume(__volume),
       timeset(__timeset)
     {
     }
-    uint8_t statu;
-    uint8_t volume;
-    bool tail_key;
-    uint8_t cmd[2];
+    ~CDplayer(){} 
+    uint32_t volume;
+    // uint8_t statu;
+    MP3COMMAND _ntagcmd;
+    MP3COMMAND endplaycmd;
+    MP3COMMAND GetVolume();
+    // bool tail_key;
+    // uint8_t cmd[2];
+    uint8_t ntagdata[16];
     uint16_t heartbeat;
     uint16_t timeset;
     uint8_t current_CD;
-    bool cmd_wait_for_handle;
+    // bool cmd_wait_for_handle;
+    // void Mp3Play();
+    // int ReadCDdata();
+    // bool new_cmd_has_been_recived();
+    // int Mp3EndPlay();
+
     int Init();
-    int CDdetect();
-    void Mp3Play();
-    int ReadCDdata();
-    void VolumeCtr();
-    bool tailkey_is_on();
-    bool new_cmd_has_been_recived();
-    void MotorCtr(uint8_t __switch);
-    int Mp3EndPlay();
-    bool is_CD_been_switched();
+    int CDdetect(MP3COMMAND* _mp3cmd);
+    bool tailkey_is_on();    
+    void MotorCtr(uint8_t __switch);    
+    // bool is_CD_been_switched();
     void Update();
-    //~CDplayer();
+    void SystemNotify();
+    void MP3ctrl(MP3COMMAND _cmd);
+    void ErrorHandler(uint8_t err_code);
+    MP3COMMAND* UnpackNtagMsg();
+    
 };
 
 #endif

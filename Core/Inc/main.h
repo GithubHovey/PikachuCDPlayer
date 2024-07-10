@@ -61,8 +61,6 @@ void Error_Handler(void);
 #define MOTOR_POWER_CTL_GPIO_Port GPIOB
 #define TAIL_KEY_Pin GPIO_PIN_1
 #define TAIL_KEY_GPIO_Port GPIOB
-#define SYSTEM_TICK_Pin GPIO_PIN_2
-#define SYSTEM_TICK_GPIO_Port GPIOB
 #define RFID_CS_Pin GPIO_PIN_12
 #define RFID_CS_GPIO_Port GPIOB
 #define RFID_CLK_Pin GPIO_PIN_13

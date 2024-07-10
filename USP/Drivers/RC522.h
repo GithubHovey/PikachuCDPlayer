@@ -63,7 +63,8 @@ void delay_10ms(unsigned int _10ms);
 void WaitCardOff(void);
 void RFID_Init(void);
 unsigned char Rc522Test(void);
-int NtagDetect(void); 
+int NtagDetect(uint8_t *pdata); 
+int ReadNtagMsg(uint8_t * rxcmd);
 // MF522命令字
 #define PCD_IDLE              0x00               //取消当前命令
 #define PCD_AUTHENT           0x0E               //验证密钥

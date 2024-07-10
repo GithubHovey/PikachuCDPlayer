@@ -697,7 +697,7 @@ void RFID_Init(void)
 * @param  
 * @return 
 */
-int NtagDetect()
+int NtagDetect(uint8_t *pdata)
 {
     if(PcdRequest(REQ_ALL, Temp) != MI_OK)
         return -1;
@@ -714,7 +714,7 @@ int NtagDetect()
     // ntag_txdata[5] = 0x06;
     // if(PcdWrite(0x07,ntag_txdata) != MI_OK)
     //     return -1;
-    if(PcdRead(0x07,ntag_rxdata) != MI_OK) //第七页的 ntag_rxdata[2~5] 4个字节 
+    if(PcdRead(0x07,pdata) != MI_OK) //第七页的 ntag_rxdata[2~5] 4个字节 
         return -1;
     
     return 0;

@@ -26,9 +26,10 @@ static void TaskInit()
 */
 static void DeviceInit()
 {
-		DFplayerInit();
-    DebugMonitorInit();
-    RFID_Init();
+    pikachu_player.Init();
+    //DebugMonitorInit();
+    
+
 }
 /**
 * @brief  

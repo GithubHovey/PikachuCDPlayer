@@ -48,6 +48,7 @@ typedef struct
     UART_HandleTypeDef *huart;
     // usart_call_back callback_func;
     uint8_t rxbuff[10];
+		uint8_t txbuff[10];
     uint16_t rxbuff_size;
 }DFplayer;
 

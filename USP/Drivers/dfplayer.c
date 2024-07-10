@@ -14,6 +14,7 @@ DFplayer mp3 = {
     .huart = &huart2,
     .rxbuff_size = 10
 };
+uint8_t tx_msg[10];
 // uint8_t cmd[2];
 /**
 * @brief  
@@ -22,7 +23,7 @@ DFplayer mp3 = {
 */
 static int SendCMD(uint8_t cmd,uint8_t data1,uint8_t data2,uint8_t return_flag)
 {
-    uint8_t tx_msg[10];
+    
     uint16_t check_sum = 0;
     tx_msg[0] = 0x7e;
     tx_msg[1] = 0xff;
@@ -98,8 +99,8 @@ int ContinuePlay()
 int PlayTargetVoice(uint8_t id)
 {    
 	SendCMD(SELECT_FOLDER,CD_FOLDER,id,NO_ACK);
-  SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
-  return 0;
+  //SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
+    return 0;
 }
 
 /**
@@ -166,10 +167,10 @@ uint8_t MP3_Unpack()
                     mp3statu = MP3RUNNING;
                     break;
                 case MP3STOP:
-                    mp3statu = MP3STOP
+                    mp3statu = MP3STOP;
                     break;
                 case MP3END:
-                    mp3statu = MP3END
+                    mp3statu = MP3END;
                     break;
                 default:
                     break;

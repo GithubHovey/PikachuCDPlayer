@@ -1,7 +1,7 @@
 /*------------------------------------------------------------------------------
- * @file    SYS_INTERNAL.H
+ * @file    DELAY.H
  * @author  Hovey https://space.bilibili.com/33582262?spm_id_from=333.1007.0.0
- * @date    2024/04/30 18:07:44
+ * @date    2024/07/08 16:20:58
  * @brief   
  * -----------------------------------------------------------------------------
  * @attention 
@@ -9,35 +9,18 @@
 ------------------------------------------------------------------------------*/
 
 /* Define to prevent recursive inclusion  ------------------------------------*/
-#ifndef __SYS_INTERNAL_H
-#define __SYS_INTERNAL_H
+#ifndef __DELAY_H
+#define __DELAY_H
 
 /* Files includes  -----------------------------------------------------------*/
-#include "FreeRTOS.h"
-#include "task.h"
-#include "queue.h"
-#include "Middlewares/CDplayer.h"
+
 
 /* Defines -------------------------------------------------------------------*/
-/* Task Config Definitions ---------------------------------------------------------*/
-#define Tiny_Stack_Size       64
-#define Small_Stack_Size      128
-#define Normal_Stack_Size     256
-#define Large_Stack_Size      512
-#define Huge_Stack_Size       1024
-	
-#define PriorityVeryLow       1
-#define PriorityLow           2
-#define PriorityBelowNormal   3
-#define PriorityNormal        4
-#define PriorityAboveNormal   5
-#define PriorityHigh          6
-#define PrioritySuperHigh     7
-#define PriorityRealtime      8
+
 
 /* Variables -----------------------------------------------------------------*/
-extern CDplayer pikachu_player;
+
 
 /* Functions ----------------------------------------------------------------*/
-void AppInit();
+void Delayms(unsigned short ms);
 #endif
