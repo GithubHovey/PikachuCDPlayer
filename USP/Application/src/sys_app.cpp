@@ -10,13 +10,14 @@
 #include "Application/include/sys_init.h"
 #include "Application/include/sys_internal.h"
 
-// TaskHandle_t debug_handle;
+TaskHandle_t debug_handle;
 TaskHandle_t ntag_handle;
 TaskHandle_t volume_handle;
 TaskHandle_t mp3_handle;
 QueueHandle_t MP3_TxPort;
+
 // TaskHandle_t pikachu_handle;
-// void TaskDebug(void *arg);
+void TaskDebug(void *arg);
 void TaskNtagDetect(void *arg);
 void TaskVolumeCtrl(void *arg);
 void TaskMp3(void *arg);
@@ -28,12 +29,11 @@ void TaskMp3(void *arg);
 */
 void AppInit()
 {
-		//xTaskCreate(TaskDebug,"App.debug",Normal_Stack_Size, NULL, PriorityNormal,&debug_handle);
-		xTaskCreate(TaskMp3,"App.mp3",Normal_Stack_Size, NULL, PriorityHigh,&mp3_handle);
-        MP3_TxPort    = xQueueCreate(4, sizeof(MP3COMMAND));
-    //xTaskCreate(TaskNtagDetect,"App.ntagdetect",Small_Stack_Size, NULL, PriorityLow,&ntag_handle);
-    xTaskCreate(TaskVolumeCtrl,"App.volumecontrol",Small_Stack_Size, NULL, PriorityNormal,&volume_handle);
-    
+		// xTaskCreate(TaskDebug,"App.debug",Normal_Stack_Size, NULL, PriorityNormal,&debug_handle);
+		MP3_TxPort = xQueueCreate(4, sizeof(MP3COMMAND));
+		xTaskCreate(TaskMp3,"App.mp3",Small_Stack_Size, NULL, PriorityHigh,&mp3_handle);
+		xTaskCreate(TaskNtagDetect,"App.ntagdetect",Small_Stack_Size, NULL, PriorityNormal,&ntag_handle);
+		xTaskCreate(TaskVolumeCtrl,"App.volumecontrol",Small_Stack_Size, NULL, PriorityNormal,&volume_handle);		   
     //xTaskCreate(TaskCDplayer,"App.pikachuCDplay",Normal_Stack_Size, NULL, PriorityNormal,&pikachu_handle);
 }
 /**
@@ -46,17 +46,13 @@ void TaskNtagDetect(void *arg)
     /* Pre-Load for task */
     TickType_t xLastWakeTime_t;
     xLastWakeTime_t = xTaskGetTickCount();
-    static MP3COMMAND *MP3TxMsg;
+    static MP3COMMAND MP3TxMsg;
     for(;;){
         /* wait for next circle */
-        vTaskDelayUntil(&xLastWakeTime_t, 20);         
+        vTaskDelayUntil(&xLastWakeTime_t, 15);          
         if(pikachu_player.CDdetect(MP3TxMsg))
         {
-            if(MP3TxMsg != NULL)
-            {
-                xQueueSend(MP3_TxPort,MP3TxMsg,0); 
-            }
-            
+            xQueueSend(MP3_TxPort,&MP3TxMsg,0);   
         }
     } 
 }
@@ -65,24 +61,15 @@ void TaskMp3(void *arg)
     /* Pre-Load for task */
     TickType_t xLastWakeTime_t;
     xLastWakeTime_t = xTaskGetTickCount();
-    static MP3COMMAND MP3TxMsg;
+    static MP3COMMAND MP3Msg;
     //PlayTargetVoice(0x01);
     for(;;){
         /* wait for next circle */
-        if(xQueueReceive(MP3_TxPort,&MP3TxMsg,portMAX_DELAY) == pdPASS)
+        if(xQueueReceive(MP3_TxPort,&MP3Msg,portMAX_DELAY) == pdPASS)
         {
-            pikachu_player.MP3ctrl(MP3TxMsg); //解包发送
-            vTaskDelay(10);
+            pikachu_player.MP3ctrl(MP3Msg); //解包发送
+            vTaskDelay(20);
         }
-        // if(!pikachu_player.cmd_list.empty())
-        // {
-		// 	auto cmd = pikachu_player.cmd_list.front();
-        //     pikachu_player.MP3ctrl(cmd); //解包发送
-        //     pikachu_player.cmd_list.pop();//出队
-        // }
-        // vTaskDelayUntil(&xLastWakeTime_t, 10);
-       // ReportData2DebugMonitor(tx_data,9);
-
     } 
 }
 void TaskVolumeCtrl(void *arg)
@@ -93,7 +80,7 @@ void TaskVolumeCtrl(void *arg)
     static MP3COMMAND MP3TxMsg;
     for(;;){
         /* wait for next circle */	
-        vTaskDelayUntil(&xLastWakeTime_t, 40);
+        vTaskDelayUntil(&xLastWakeTime_t, 200);
         MP3TxMsg = 	pikachu_player.GetVolume();		
         xQueueSend(MP3_TxPort,&MP3TxMsg,0); 
        // ReportData2DebugMonitor(tx_data,9);
@@ -105,24 +92,24 @@ void TaskVolumeCtrl(void *arg)
 * @param  
 * @return 
 */
-// void TaskDebug(void *arg)
-// {
-//     /* Pre-Load for task */
-//     TickType_t xLastWakeTime_t;
-//     xLastWakeTime_t = xTaskGetTickCount();
-// 		//VolumeCtrl(0x06);
-//     for(;;){
-//         /* wait for next circle */
-//         //test motor:
-//         //test mp3:
-//         //test adc:
-//         //HAL_GPIO_WritePin(MOTOR_POWER_CTL_GPIO_Port,MOTOR_POWER_CTL_Pin,GPIO_PIN_SET);
-// 		//PlayTargetVoice(0x01);
-//         vTaskDelayUntil(&xLastWakeTime_t, 1000);
-//        // ReportData2DebugMonitor(tx_data,9);
+void TaskDebug(void *arg)
+{
+    /* Pre-Load for task */
+    TickType_t xLastWakeTime_t;
+    xLastWakeTime_t = xTaskGetTickCount();
+		//VolumeCtrl(0x06);
+    for(;;){
+        /* wait for next circle */
+        //test motor:
+        //test mp3:
+        //test adc:
+        // HAL_GPIO_WritePin(MOTOR_POWER_CTL_GPIO_Port,MOTOR_POWER_CTL_Pin,GPIO_PIN_SET);
+		//PlayTargetVoice(0x01);
+        vTaskDelayUntil(&xLastWakeTime_t, 1000);
+       // ReportData2DebugMonitor(tx_data,9);
 
-//     }
-// }
+    }
+}
 
 
 // void TaskCDplayer(void *arg)

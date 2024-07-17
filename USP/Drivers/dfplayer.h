@@ -67,4 +67,5 @@ int EndPlay();
 int ContinuePlay();
 int UpdateStatus();
 uint8_t MP3_Unpack();
+void SysNotify(uint8_t notify);
 #endif

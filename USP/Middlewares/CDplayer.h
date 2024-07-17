@@ -21,8 +21,11 @@ extern "C"
 
 #define CD_OK     0
 #define CD_ERROR  -1
-#define MOTOR_ON 1
+#define MOTOR_FAST 50
+#define MOTOR_SLOW 40
 #define MOTOR_OFF 0
+
+
 struct MP3COMMAND
 {
   uint8_t cmd_type;
@@ -42,15 +45,18 @@ public:
     ~CDplayer(){} 
     uint32_t volume;
     // uint8_t statu;
-    MP3COMMAND _ntagcmd;
+    MP3COMMAND mp3cmd;
     MP3COMMAND endplaycmd;
     MP3COMMAND GetVolume();
     // bool tail_key;
     // uint8_t cmd[2];
     uint8_t ntagdata[16];
+		uint8_t current_CD;
     uint16_t heartbeat;
     uint16_t timeset;
-    uint8_t current_CD;
+		uint16_t speed;
+		uint8_t test;
+    
     // bool cmd_wait_for_handle;
     // void Mp3Play();
     // int ReadCDdata();
@@ -58,15 +64,15 @@ public:
     // int Mp3EndPlay();
 
     int Init();
-    int CDdetect(MP3COMMAND* _mp3cmd);
+    int CDdetect(MP3COMMAND& _mp3cmd);
     bool tailkey_is_on();    
-    void MotorCtr(uint8_t __switch);    
+    void MotorCtr(uint16_t _speed);  
     // bool is_CD_been_switched();
     void Update();
     void SystemNotify();
     void MP3ctrl(MP3COMMAND _cmd);
     void ErrorHandler(uint8_t err_code);
-    MP3COMMAND* UnpackNtagMsg();
+    int UnpackNtagMsg(MP3COMMAND& _mp3cmd);
     
 };
 

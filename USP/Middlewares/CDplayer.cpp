@@ -1,11 +1,15 @@
 #include "Middlewares/CDplayer.h"
 #include "adc.h"
-
+#include "tim.h"
+uint16_t _fast = 50;
+uint16_t _slow = 30;
 int CDplayer::Init()
 {
 	HAL_ADC_Start_DMA(&hadc1, &volume, 1);
+    HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
     DFplayerInit();
-    RFID_Init();    
+    RFID_Init();
+    SystemNotify();
     return 0;
 }
 /**
@@ -36,7 +40,7 @@ MP3COMMAND CDplayer::GetVolume()
 * @return 
 */
 
-MP3COMMAND* CDplayer::UnpackNtagMsg()
+int CDplayer::UnpackNtagMsg(MP3COMMAND& _mp3cmd)
 {
     
     if(ntagdata[2]==0x30&&ntagdata[3]==0x31)
@@ -44,56 +48,67 @@ MP3COMMAND* CDplayer::UnpackNtagMsg()
         /*其余两位均为数字*/
         if((ntagdata[4]-0x30)>=0 && (ntagdata[4]-0x30)<=9 && (ntagdata[5]-0x30)>=0 && (ntagdata[5]-0x30)<=9)
         {
-            _ntagcmd.cmd_type = SELECT_FOLDER;
-            _ntagcmd.cmd_data = (ntagdata[4]-0x30)*10 + (ntagdata[5]-0x30);
-            return &_ntagcmd;
+            _mp3cmd.cmd_type = SELECT_FOLDER;
+            _mp3cmd.cmd_data = (ntagdata[4]-0x30)*10 + (ntagdata[5]-0x30);
+            return 1;
         }
     }
     if(ntagdata[2]==0x6c&&ntagdata[3]==0x69&&ntagdata[4]==0x73&&ntagdata[5]==0x74)
     {
-        _ntagcmd.cmd_type = FOLDER_CIRCLE;
-        _ntagcmd.cmd_data = 0xff;
-        return &_ntagcmd;
+        _mp3cmd.cmd_type = FOLDER_CIRCLE;
+        _mp3cmd.cmd_data = 0xff;
+        return 1;
     }
-    return NULL;
+    return 0;
 }
 /**
 * @brief ntag检测函数  
 * @param  none
 * @return 0：成功 -1：失败
 */
-int CDplayer::CDdetect(MP3COMMAND* _mp3cmd)
+int CDplayer::CDdetect(MP3COMMAND& _mp3cmd)
 {
+
     if(tailkey_is_on())
     {
-        MotorCtr(MOTOR_ON);
         if(NtagDetect(ntagdata)==MI_OK)
-        { 
-            _mp3cmd = UnpackNtagMsg();
-            if(_mp3cmd != NULL)
+        {
+            if(heartbeat<=timeset-10)//(满心跳不检测)
             {
-                heartbeat = timeset;
-                if((current_CD != _mp3cmd->cmd_data)&&(tailkey_is_on()))
+                if(UnpackNtagMsg(_mp3cmd))
                 {
-                    current_CD = _mp3cmd->cmd_data;
-                    // cmd_list.push(*ntagcmd);
-                    return 1;
-                }            
-            }
+                    heartbeat = timeset;
+                    if((current_CD != _mp3cmd.cmd_data)&&(tailkey_is_on()))
+                    {
+                        current_CD = _mp3cmd.cmd_data;
+                        // cmd_list.push(*ntagcmd);
+                        MotorCtr(_fast);//大启动力矩
+                        return 1;
+                    }else if((current_CD == _mp3cmd.cmd_data)&&(tailkey_is_on()))   
+                    {
+                        MotorCtr(_slow);//缓速降功耗、减噪
+                    }         
+                }
+            } 
+        }
+        if(heartbeat<=0)
+        {
+            MotorCtr(_fast);//未识别到CD时，加速电机
         }
     }else{
         heartbeat = 0;
+        MotorCtr(MOTOR_OFF);
+				//current_CD = 0;
     }
 
-
     if(heartbeat<=0)
-    {
-        MotorCtr(MOTOR_OFF);
-        _mp3cmd = &endplaycmd;
-        endplaycmd.cmd_type = END_PLAY;
-        current_CD = 0;
-        //cmd_list.push(endplay);
-        return 1;    
+    { 
+        if(current_CD!=0)
+        {
+            _mp3cmd.cmd_type = END_PLAY;
+            current_CD = 0;
+            return 1; 
+        }
     }
     else{
         heartbeat--;
@@ -119,27 +134,21 @@ int CDplayer::CDdetect(MP3COMMAND* _mp3cmd)
 // }
 bool CDplayer::tailkey_is_on()
 {
-    if(1)
-    return 1;
-    if(0)
-    {
-        return 0;
-    }
+    return (HAL_GPIO_ReadPin(TAIL_KEY_GPIO_Port, TAIL_KEY_Pin) == GPIO_PIN_SET) ? 0 : 1;
 }
 /**
 * @brief  检查当前解析的曲目与当前播放的曲目是否一致
 * @param  
 * @return 1：
 */
-// bool CDplayer::new_cmd_has_been_recived()
-// {  
-//     bool recived = cmd_wait_for_handle;
-//     cmd_wait_for_handle = 0;
-//     return recived;
-// }
-void CDplayer::MotorCtr(uint8_t __switch)
+void CDplayer::MotorCtr(uint16_t _speed)
 {
-
+	speed = _speed;
+    __HAL_TIM_SET_COMPARE(&htim3,TIM_CHANNEL_3,speed);
+#if 0
+    if(tailkey_is_on()&&heartbeat<=timeset-30&&heartbeat>0)
+    speed=_slow;
+#endif
 }
 // int CDplayer::Mp3EndPlay()
 // {
@@ -185,6 +194,13 @@ void CDplayer::MP3ctrl(MP3COMMAND _cmd)
         default:
             break;
     }
+}
+void CDplayer::SystemNotify()
+{
+    VolumeCtrl(0x0a);
+    HAL_Delay(20);
+    SysNotify(0x01);
+    HAL_Delay(20);
 }
 /**
 * @brief mp3播放音乐  

@@ -60,11 +60,10 @@ int UpdateStatus()
 * @param  
 * @return 
 */
-int SystemNotify(uint8_t notify)
+void SysNotify(uint8_t notify)
 {
     SendCMD(SELECT_FOLDER,SYSTEM_VOICE_FOLDER,notify,NO_ACK);
-    SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
-    return 0;
+    //SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
 }
 /**
 * @brief  

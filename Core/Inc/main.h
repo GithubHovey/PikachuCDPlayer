@@ -57,8 +57,6 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define MOTOR_POWER_CTL_Pin GPIO_PIN_0
-#define MOTOR_POWER_CTL_GPIO_Port GPIOB
 #define TAIL_KEY_Pin GPIO_PIN_1
 #define TAIL_KEY_GPIO_Port GPIOB
 #define RFID_CS_Pin GPIO_PIN_12
