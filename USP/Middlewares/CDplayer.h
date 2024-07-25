@@ -29,7 +29,8 @@ extern "C"
 struct MP3COMMAND
 {
   uint8_t cmd_type;
-  uint8_t cmd_data;
+  uint8_t cmd_data1;
+  uint8_t cmd_data2;
 };
 
 class CDplayer

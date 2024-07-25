@@ -70,9 +70,9 @@ void SysNotify(uint8_t notify)
 * @param  
 * @return 
 */
-int PlayFavourList(void)
+int PlayFavourList(uint8_t folder)
 {
-    SendCMD(FOLDER_CIRCLE,0x00,FAVOR_FOLDER,NO_ACK);
+    SendCMD(FOLDER_CIRCLE,0x00,folder,NO_ACK);
 	return 0;
 }
 int StopPlay()
@@ -95,9 +95,9 @@ int ContinuePlay()
 * @param  
 * @return 
 */
-int PlayTargetVoice(uint8_t id)
+int PlayTargetVoice(uint8_t folder,uint8_t id)
 {    
-	SendCMD(SELECT_FOLDER,CD_FOLDER,id,NO_ACK);
+	SendCMD(SELECT_FOLDER,folder,id,NO_ACK);
   //SendCMD(PLAY_MODE_SET,0x00,SINGLE,NO_ACK);
     return 0;
 }

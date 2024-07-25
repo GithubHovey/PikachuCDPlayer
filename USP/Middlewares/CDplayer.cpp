@@ -23,14 +23,14 @@ MP3COMMAND CDplayer::GetVolume()
     vcmd.cmd_type = VOLUMESET;
     if(volume>4000) //高死区
     {
-        vcmd.cmd_data = 30;
+        vcmd.cmd_data2 = 30;
     }
     else if(volume<=400) //低死区
     {
-        vcmd.cmd_data = 0;
+        vcmd.cmd_data2 = 0;
     }
     else{
-        vcmd.cmd_data = (uint8_t)((volume-400)/120); //每120一级音量
+        vcmd.cmd_data2 = (uint8_t)((volume-400)/120); //每120一级音量
     }
     return vcmd;
 }
@@ -43,20 +43,19 @@ MP3COMMAND CDplayer::GetVolume()
 int CDplayer::UnpackNtagMsg(MP3COMMAND& _mp3cmd)
 {
     
-    if(ntagdata[2]==0x30&&ntagdata[3]==0x31)
+    /*其余两位均为数字*/
+    if((ntagdata[2]-0x30)>=0 && (ntagdata[2]-0x30)<=9 && (ntagdata[3]-0x30)>=0 && (ntagdata[3]-0x30)<=9&& (ntagdata[4]-0x30)>=0 && (ntagdata[4]-0x30)<=9 && (ntagdata[5]-0x30)>=0 && (ntagdata[5]-0x30)<=9)
     {
-        /*其余两位均为数字*/
-        if((ntagdata[4]-0x30)>=0 && (ntagdata[4]-0x30)<=9 && (ntagdata[5]-0x30)>=0 && (ntagdata[5]-0x30)<=9)
-        {
-            _mp3cmd.cmd_type = SELECT_FOLDER;
-            _mp3cmd.cmd_data = (ntagdata[4]-0x30)*10 + (ntagdata[5]-0x30);
-            return 1;
-        }
+        _mp3cmd.cmd_type = SELECT_FOLDER;
+        _mp3cmd.cmd_data1 = (ntagdata[2]-0x30)*10 + (ntagdata[3]-0x30);
+        _mp3cmd.cmd_data2 = (ntagdata[4]-0x30)*10 + (ntagdata[5]-0x30);
+        return 1;
     }
-    if(ntagdata[2]==0x6c&&ntagdata[3]==0x69&&ntagdata[4]==0x73&&ntagdata[5]==0x74)
+    /*CD*/
+    if(ntagdata[2]==0x43&&ntagdata[3]==0x44)
     {
         _mp3cmd.cmd_type = FOLDER_CIRCLE;
-        _mp3cmd.cmd_data = 0xff;
+        _mp3cmd.cmd_data2 = (ntagdata[4]-0x30)*10 + (ntagdata[5]-0x30);
         return 1;
     }
     return 0;
@@ -78,13 +77,13 @@ int CDplayer::CDdetect(MP3COMMAND& _mp3cmd)
                 if(UnpackNtagMsg(_mp3cmd))
                 {
                     heartbeat = timeset;
-                    if((current_CD != _mp3cmd.cmd_data)&&(tailkey_is_on()))
+                    if((current_CD != _mp3cmd.cmd_data2)&&(tailkey_is_on()))
                     {
-                        current_CD = _mp3cmd.cmd_data;
+                        current_CD = _mp3cmd.cmd_data2;
                         // cmd_list.push(*ntagcmd);
                         MotorCtr(_fast);//大启动力矩
                         return 1;
-                    }else if((current_CD == _mp3cmd.cmd_data)&&(tailkey_is_on()))   
+                    }else if((current_CD == _mp3cmd.cmd_data2)&&(tailkey_is_on()))   
                     {
                         MotorCtr(_slow);//缓速降功耗、减噪
                     }         
@@ -175,13 +174,13 @@ void CDplayer::MP3ctrl(MP3COMMAND _cmd)
     switch(_cmd.cmd_type)
     {
         case VOLUMESET:
-            VolumeCtrl(_cmd.cmd_data);
+            VolumeCtrl(_cmd.cmd_data2);
             break;
         case SELECT_FOLDER:
-            PlayTargetVoice(_cmd.cmd_data);
+            PlayTargetVoice(_cmd.cmd_data1,_cmd.cmd_data2);
             break;
         case FOLDER_CIRCLE:
-            PlayFavourList();
+            PlayFavourList(_cmd.cmd_data2);
             break;
         case END_PLAY:
             EndPlay();

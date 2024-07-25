@@ -16,9 +16,9 @@
 #include "main.h"
 
 /* Defines -------------------------------------------------------------------*/
-#define SYSTEM_VOICE_FOLDER 0X03
+#define SYSTEM_VOICE_FOLDER 0X01
 #define FAVOR_FOLDER        0X02
-#define CD_FOLDER           0X01
+#define CD_FOLDER           0X03
 
 /*-----------MP3-CMD-------------------*/
 // #define SINGLE_CYCLE    0x08
@@ -58,8 +58,8 @@ typedef struct
 /* Functions ----------------------------------------------------------------*/
 //int SendCMD(uint8_t cmd,uint8_t data1,uint8_t data2,uint8_t return_flag);
 void DFplayerInit(void);
-int PlayFavourList(void);
-int PlayTargetVoice(uint8_t id);
+int PlayFavourList(uint8_t folder);
+int PlayTargetVoice(uint8_t folder,uint8_t id);
 int VolumeCtrl(uint8_t var);
 int DFplayerCallback(void);
 int StopPlay();
