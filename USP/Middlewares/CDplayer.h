@@ -21,8 +21,8 @@ extern "C"
 
 #define CD_OK     0
 #define CD_ERROR  -1
-#define MOTOR_FAST 50
-#define MOTOR_SLOW 40
+//#define MOTOR_FAST 50
+// MOTOR_SLOW 40
 #define MOTOR_OFF 0
 
 

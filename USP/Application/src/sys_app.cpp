@@ -52,7 +52,9 @@ void TaskNtagDetect(void *arg)
         vTaskDelayUntil(&xLastWakeTime_t, 15);          
         if(pikachu_player.CDdetect(MP3TxMsg))
         {
-            xQueueSend(MP3_TxPort,&MP3TxMsg,0);   
+            xQueueSend(MP3_TxPort,&MP3TxMsg,0); 
+						xQueueSend(MP3_TxPort,&MP3TxMsg,0);
+						xQueueSend(MP3_TxPort,&MP3TxMsg,0);//连发三条，降低tf卡读取失败的概率
         }
     } 
 }
@@ -68,7 +70,7 @@ void TaskMp3(void *arg)
         if(xQueueReceive(MP3_TxPort,&MP3Msg,portMAX_DELAY) == pdPASS)
         {
             pikachu_player.MP3ctrl(MP3Msg); //解包发送
-            vTaskDelay(20);
+            vTaskDelay(50);
         }
     } 
 }
@@ -80,7 +82,7 @@ void TaskVolumeCtrl(void *arg)
     static MP3COMMAND MP3TxMsg;
     for(;;){
         /* wait for next circle */	
-        vTaskDelayUntil(&xLastWakeTime_t, 200);
+        vTaskDelayUntil(&xLastWakeTime_t, 300);
         MP3TxMsg = 	pikachu_player.GetVolume();		
         xQueueSend(MP3_TxPort,&MP3TxMsg,0); 
        // ReportData2DebugMonitor(tx_data,9);

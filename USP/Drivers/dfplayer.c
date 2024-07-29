@@ -40,6 +40,7 @@ static int SendCMD(uint8_t cmd,uint8_t data1,uint8_t data2,uint8_t return_flag)
         return -1;
 	return 0;
 }
+
 void DFplayerInit(void)
 {
     HAL_UART_Receive_IT(mp3.huart,mp3.rxbuff,1);

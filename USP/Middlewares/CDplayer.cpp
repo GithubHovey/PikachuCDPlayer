@@ -2,7 +2,7 @@
 #include "adc.h"
 #include "tim.h"
 uint16_t _fast = 50;
-uint16_t _slow = 30;
+uint16_t _slow = 33;
 int CDplayer::Init()
 {
 	HAL_ADC_Start_DMA(&hadc1, &volume, 1);
@@ -81,7 +81,12 @@ int CDplayer::CDdetect(MP3COMMAND& _mp3cmd)
                     {
                         current_CD = _mp3cmd.cmd_data2;
                         // cmd_list.push(*ntagcmd);
-                        MotorCtr(_fast);//大启动力矩
+                        if(speed==_fast)
+                        {
+                            MotorCtr(_slow);
+                        }else{
+                            MotorCtr(_fast);//大启动力矩
+                        }                       
                         return 1;
                     }else if((current_CD == _mp3cmd.cmd_data2)&&(tailkey_is_on()))   
                     {
